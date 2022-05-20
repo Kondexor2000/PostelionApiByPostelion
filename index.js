@@ -1,8 +1,8 @@
 const config = require('./Config/config');
 
 //APi Modules
-const cv =require('./API/Postelion_Api/cv');
-
+const cv = require('./API/Postelion_Api/cv');
+const user = require('./API/Postelion_Api/user');
 
 const express = require('express');
 const { Pool, Client } = require('pg')
@@ -21,6 +21,7 @@ const pool = new Pool({
   });
 
   cv.start(app,pool);
+  user.start(app,pool);
 
 
 app.listen(port, () => console.log(`Api Started ${port}!`))

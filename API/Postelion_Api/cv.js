@@ -7,8 +7,7 @@ module.exports=
         const module="cv";
 
         app.get('/'+module+'/'+'default', async (req, res) => {
-            console.log(req.headers);
-            Security.checkToken(pool,'UM1StkjgILGW5Trtfir2cD1E',module,async ()=>{
+            Security.checkToken(pool,req.query.token? req.query.token:"",module,async ()=>{
                 let temp ;
                 let response ={};
                 //Get Base Data
