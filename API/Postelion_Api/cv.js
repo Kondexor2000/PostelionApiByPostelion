@@ -1,3 +1,5 @@
+const Security= require('../../Security/Security');
+
 module.exports=
 {
     start(app,pool)
@@ -5,6 +7,8 @@ module.exports=
         const module="cv";
 
         app.get('/'+module+'/'+'default', async (req, res) => {
+            console.log(req.headers);
+            Security.checkToken(pool,'UM1StkjgILGW5Trtfir2cD1E',module,async ()=>{
                 let temp ;
                 let response ={};
                 //Get Base Data
@@ -48,6 +52,11 @@ module.exports=
 
                 res.contentType('application/json');
                 res.status(200).json(resp);
+        },()=>
+        {
+            res.contentType('application/json');
+            res.status(403).json({status:'no auth'});
+        });
         });
     }
 }
