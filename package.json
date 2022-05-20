@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/Postelion/PostelionApi/issues"
   },
-  "homepage": "https://github.com/Postelion/PostelionApi#readme"
+  "homepage": "https://github.com/Postelion/PostelionApi#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "pg": "^8.7.3"
+  }
 }
