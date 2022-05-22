@@ -23,12 +23,8 @@ module.exports=
                 if(pass.rows[0]['value_string']==req.query.password)
                 {
                     let config = await pool.query("select * from config");
-                    let cv = await pool.query("select * from cv");
-                    let cv_data = await pool.query("select * from cv_data");
-                    let cv_experience = await pool.query("select * from cv_experience");
-                    let cv_languages = await pool.query("select * from cv_languages");
                     res.contentType('application/json');
-                    res.status(200).json({data:'ok'});
+                    res.status(200).json(config.rows);
                 }
                 else {
                     res.contentType('application/json');
