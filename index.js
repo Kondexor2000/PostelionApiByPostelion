@@ -1,4 +1,5 @@
 const config = require('./Config/config');
+const bodyParser = require('body-parser');
 
 //APi Modules
 const cv = require('./API/Postelion_Api/cv');
@@ -15,6 +16,7 @@ const app = express();
 const port = 3001;
 
 app.use(cors())
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const pool = new Pool({
     user: config.dbConnection.username,
