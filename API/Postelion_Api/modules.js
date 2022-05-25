@@ -1,28 +1,62 @@
-const Security= require('../../Security/Security');
+const config = require('../../Config/config');
+const { Pool} = require('pg')
 
+const pool = new Pool({
+    user: config.dbConnection.username,
+    host: config.dbConnection.host,
+    database: config.dbConnection.dbname,
+    password: config.dbConnection.password,
+    port: config.dbConnection.port,
+  });
 module.exports=
 {
-    start(app,pool)
+    start(app)
     {
         const module="modules";
 
-        app.get('/'+module+'/'+'get', async (req, res) => {
-            Security.checkToken(pool,req.query.token? req.query.token:"",module,async ()=>{
-                let temp = await pool.query("select m.*  from credentials c\
+        app.get('/'+module+'/'+'get', (req, res) => {
+                pool.query("select m.*  from credentials c\
                 left join user_credentials uc on uc.credential =c.id \
                 left join users u on u.id = uc.user_id \
                 left join modules m on c.submodule::integer = m.id \
                 where c.module ='module' \
                 and u.token ='"+req.query.token+"' and \
-                uc.show=true");
+                uc.show=true",(err,response)=>{
+                    res.contentType('application/json');
+                    res.status(200).json(response.rows);
+                });
 
-                res.contentType('application/json');
-                res.status(200).json(temp.rows);
-        },()=>
-        {
-            res.contentType('application/json');
-            res.status(403).json({status:'no auth'});
+          
         });
+
+        app.get('/'+module+'/'+'admin', async (req, res) => {
+
+                if(await GetModuleSpecificAccess(req.query.token,'/admin',pool))
+                {
+                    res.contentType('application/json');
+                    res.status(200).json({status:'Auth'});  
+                }
+                else 
+                {
+                    res.contentType('application/json');
+                    res.status(403).json({status:'no auth'}); 
+                }
         });
     }
+}
+
+async function GetModuleSpecificAccess(token,value,pool)
+{
+
+    let temp = await pool.query("select case when (select uc.show  from user_credentials uc \
+        left join credentials c on c.submodule::integer = uc.credential \
+        left join users u on u.id  = uc.user_id \
+        left join modules m on c.submodule::integer = m.id  \
+        where c.module ='module' \
+        and m.value  = '"+value+"'\
+        and u.token ='"+token+"') is not null then 'Access'\
+        else 'NoAuth'\
+        end as result");
+        if(temp.rows[0]['result']=='Access') return true;
+        else return false;
 }

@@ -24,6 +24,9 @@ const pool = new Pool({
     database: config.dbConnection.dbname,
     password: config.dbConnection.password,
     port: config.dbConnection.port,
+    max:100,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
   });
 
   cv.start(app,pool);
