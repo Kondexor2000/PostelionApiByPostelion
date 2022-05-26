@@ -1,16 +1,8 @@
 const config = require('../../Config/config');
-const { Pool} = require('pg')
 
-const pool = new Pool({
-    user: config.dbConnection.username,
-    host: config.dbConnection.host,
-    database: config.dbConnection.dbname,
-    password: config.dbConnection.password,
-    port: config.dbConnection.port,
-  });
 module.exports=
 {
-    start(app)
+    start(app,pool)
     {
         const module="modules";
 
