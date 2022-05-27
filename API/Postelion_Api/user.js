@@ -35,7 +35,7 @@ module.exports=
                 let resp = await pool.query("select case when al.time_to_use is null then 'Access' else \
                 case when (select al.id  from admin_log al where al.logged + (al.time_to_use  ||' minutes')::interval >= now() and al.token = '"+req.query.token+"') is null then 'NoAuth'\
                 else 'Auth' end \
-                end from admin_log al where al.token = '"+req.query.token+"'");
+                end as result from admin_log al where al.token = '"+req.query.token+"'");
                 res.contentType('application/json');
                 res.status(200).json(resp.rows[0]);
         });

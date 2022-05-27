@@ -7,6 +7,7 @@ module.exports=
         const module="modules";
 
         app.get('/'+module+'/'+'get', (req, res) => {
+            try{
                 pool.query("select m.*  from credentials c\
                 left join user_credentials uc on uc.credential =c.id \
                 left join users u on u.id = uc.user_id \
@@ -17,6 +18,11 @@ module.exports=
                     res.contentType('application/json');
                     res.status(200).json(response.rows);
                 });
+            }
+            catch{
+                    res.contentType('application/json');
+                    res.status(500).json({status:'error'});
+            }
 
           
         });
