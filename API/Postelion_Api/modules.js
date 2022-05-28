@@ -19,7 +19,7 @@ module.exports=
                     res.status(200).json(response.rows);
                 });
             }
-            catch{
+            catch (e){
                     res.contentType('application/json');
                     res.status(500).json({status:'error'});
             }

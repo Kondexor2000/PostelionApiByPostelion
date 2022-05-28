@@ -24,20 +24,24 @@ module.exports=
                         res.status(403).json({status:'no auth'});
                     }
                 }
-                catch
+                catch (e)
                 {
                     res.contentType('application/json');
                     res.status(500).json({status:'error'}); 
                 }
         });
 
-        app.get('/'+module+'/'+'get/admin/access', async (req, res) => {
-                let resp = await pool.query("select case when al.time_to_use is null then 'Access' else \
-                case when (select al.id  from admin_log al where al.logged + (al.time_to_use  ||' minutes')::interval >= now() and al.token = '"+req.query.token+"') is null then 'NoAuth'\
-                else 'Auth' end \
-                end as result from admin_log al where al.token = '"+req.query.token+"'");
+        app.get('/'+module+'/'+'admin/access', async (req, res) => {
+                let resp = await pool.query("select bool_get_admin_success('"+req.query.token+"') as result");
                 res.contentType('application/json');
                 res.status(200).json(resp.rows[0]);
         });
+        app.get('/'+module+'/'+'admin/config', async (req, res) => {
+            let resp = await pool.query("select * from config where (select bool_get_admin_success('"+req.query.token+"')) = true");
+            res.contentType('application/json');
+            res.status(200).json(resp.rows);
+    });
+
+
     }
 }
