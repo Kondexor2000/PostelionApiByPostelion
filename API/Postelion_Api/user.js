@@ -10,7 +10,6 @@ module.exports=
                 res.contentType('application/json');
                 res.status(200).json(resp.rows[0]);
         });
-
         app.post('/'+module+'/'+'admin', async (req, res) => {
                 let pass = await pool.query("select c.value_string  from config c where c.name = 'secret_code'");
                 try{
@@ -30,7 +29,6 @@ module.exports=
                     res.status(500).json({status:'error'}); 
                 }
         });
-
         app.get('/'+module+'/'+'admin/access', async (req, res) => {
                 let resp = await pool.query("select bool_get_admin_success('"+req.query.token+"') as result");
                 res.contentType('application/json');
@@ -40,6 +38,23 @@ module.exports=
             let resp = await pool.query("select * from config where (select bool_get_admin_success('"+req.query.token+"')) = true");
             res.contentType('application/json');
             res.status(200).json(resp.rows);
+    
+        });
+        app.post('/'+module+'/'+'admin/config', async (req, res) => {
+            let pass = await pool.query("INSERT INTO config (name, value_int, value_string, value_date) VALUES('"+req.body.name+"', "+req.body.valueInt+", "+req.body.valueString+", "+req.body.valueDate+")");
+            try{
+                
+                    console.log(pass.rows);
+
+                    res.contentType('application/json');
+                    res.status(200).json({status:'ok'});
+                
+            }
+            catch (e)
+            {
+                res.contentType('application/json');
+                res.status(500).json({status:'error'}); 
+            }
     });
 
 
