@@ -1,6 +1,6 @@
 <?PHP 
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST');
+header('Access-Control-Allow-Methods:  POST');
 header("Access-Control-Allow-Headers: content-type");
 header("Content-Type: application/json");
 
@@ -18,6 +18,10 @@ switch($action)
         $result = pg_query($conn, "select * from users where token ='". $body["token"]."'");
         $rs = pg_fetch_all($result);
         echo json_encode($rs);
+    break;
+    case "set_name":
+        $value = $_GET["value"];
+        $result = pg_query($conn, "update users set name = '".$value."' where token ='". $body["token"]."'");
     break;
 }
 
