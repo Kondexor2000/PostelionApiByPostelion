@@ -10,16 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/Postelion/PostelionApi.git"
   },
-  "author": "",
+  "author": "postelion",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Postelion/PostelionApi/issues"
   },
-  "homepage": "https://github.com/Postelion/PostelionApi#readme",
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "pg": "^8.7.3"
-  }
+  "homepage": "https://github.com/Postelion/PostelionApi#readme"
 }
