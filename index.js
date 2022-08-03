@@ -2,9 +2,12 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
+//Config express
 const express = require('express');
 const app = express();
+app.use(express.urlencoded({extended: true}))
 
+//Configure connection to DB
 const knex = require('knex')({
   client: 'pg',
   version: '7.2',
@@ -16,17 +19,19 @@ const knex = require('knex')({
     database : process.env.DB_DATABASE
   }
 });
-knex('users')
-  .select('id')
-  .select('name')
-  .select('last_logged')
-  .then((data)=>{console.log(data);});
+
+//Load Modules
+const user = require('./modules/user');
+const credentials = require('./modules/credentials');
+
+//Start Modules
+user.startApi(app,knex,'/user');
+credentials.startApi(app,knex,'/credentials');
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
+
   
-  app.listen(process.env.API_PORT, () => {
+//Run Express
+app.listen(process.env.API_PORT, () => {
     console.log(`API RUN ON PORT: ${process.env.API_PORT}`)
-  })
+})
