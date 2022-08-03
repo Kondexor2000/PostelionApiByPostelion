@@ -23,10 +23,12 @@ const knex = require('knex')({
 //Load Modules
 const user = require('./modules/user');
 const credentials = require('./modules/credentials');
+const modules = require('./modules/modules');
 
 //Start Modules
 user.startApi(app,knex,'/user');
 credentials.startApi(app,knex,'/credentials');
+modules.startApi(app,knex,'/modules')
 
 
 
