@@ -1,61 +1,39 @@
 const security = require('./security');
+const express = require('express');
+const {db} = require('../index');
+router = express.Router();
 
-function startApi(app,knex,module)
-{
-    initGet(app,knex,module);
-}
-function initGet(app,knex,module)
-{
-    app.get(module+'', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'users_read',res,
-        ()=>{
-            knex('users')
-                .select('id')
-                .select('name')
-                .select('last_logged')
-                .then((data)=>{
-                    res.status(200)
-                    res.json(data)
-                })
-                .catch(error=>{
-                    res.status(500)
-                    res.send('Error')
-                });
-        }
-    )});
-    app.get(module+'/current', (req, res) => {
-        knex('users')
-            .select('id')
-            .select('name')
-            .select('last_logged')
-            .where('users.token',req.headers['authorization'].split(' ')[1])
-            .then((data)=>{
-                res.status(200)
-                res.json(data)
-            })
-            .catch(error=>{
-                 res.status(500)
-                res.send('Error')
-            });
-    });
-    app.get(module+'/:userId', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'users_read',res,
-        ()=>{
-            knex('users')
-                .select('id')
-                .select('name')
-                .select('last_logged')
-                .where('users.id',req.params.userId)
-                .then((data)=>{
-                    res.status(200)
-                    res.json(data)
-                })
-                .catch(error=>{
-                    res.status(500)
-                    res.send('Error')
-                });
-        }
-    )});
-}
+router.get('',async (req, res) => {
 
-module.exports.startApi = startApi;
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read');
+    if(credential)
+    {
+        const result = await db('users').select('id').select('name').select('last_logged');
+
+        res.status(200);
+        res.send(result);
+    }
+});
+router.get('/current',async (req, res) => {
+
+    const result = await db('users').select('id').select('name').select('last_logged')
+        .where('users.token',req.headers['authorization'].split(' ')[1]);
+
+    res.status(200);
+    res.json(result);
+    
+});
+router.get('/:userId',async (req, res) => {
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read');
+    if(credential)
+    {
+        const result = await  db('users').select('id').select('name').select('last_logged')
+            .where('users.id',req.params.userId)
+
+        res.status(200);
+        res.json(result)
+    }
+});
+
+
+module.exports = router;

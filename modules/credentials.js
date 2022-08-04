@@ -1,87 +1,57 @@
 const security = require('./security');
+const express = require('express');
+const {db} = require('../index');
+router = express.Router();
 
-function startApi(app,knex,module)
-{
-    initGet(app,knex,module);
-    initPost(app,knex,module);
-}
-function initGet(app,knex,module)
-{
-    app.get(module+'', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'credentials_read',res,
-        ()=>{
-            knex('credentials')
-                .select('id')
-                .select('module')
-                .select('submodule')
-                .select('description')
-                .then((data)=>{
-                    res.status(200)
-                    res.json(data)
-                })
-                .catch(error=>{
-                    res.status(500)
-                    res.send('Error')
-                });
-        }
-    )});
-    app.get(module+'/:userId', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'users_read',res,
-        ()=>{
-            knex('credentials')
-                .select('id')
-                .select('module')
-                .select('submodule')
-                .select('description')
-                .where('credentials.id',req.params.userId)
-                .then((data)=>{
-                    res.status(200)
-                    res.json(data)
-                })
-                .catch(error=>{
-                    res.status(500)
-                    res.send('Error')
-                });
-        }
-    )});
-}
-function initPost(app,knex,module)
-{
-    app.post(module+'', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'credentials_write',res,
-        ()=>{
-            knex.insert({
-                module:req.body.module,
-                submodule:req.body.submodule,
-                description:req.body.description
-            })
-            .into('credentials')
-            .then(data=>{
-                res.status(200)
-                res.send('Success')
-            })
-            .catch(error=>{
-                res.status(500)
-                res.send('Error')
-            })
-        }
-    )});
-    app.post(module+'/remove/:credentialId', (req, res) => {
-        security.checkCredentials(req.headers['authorization'].split(' ')[1],knex,'credentials_write',res,
-        ()=>{
-            knex('credentials')
-            .where('credentials.id',req.params.credentialId)
-            .del()
-            .then(data=>{
-                res.status(200)
-                res.send('Success')
-            })
-            .catch(error=>{
-                res.status(500)
-                res.send('Error')
-            })
-        }
-    )});
-}
+router.get('',async (req, res) => {
 
-module.exports.startApi = startApi;
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_read');
+    if(credential)
+    {
+        const result = await db('credentials').select('id').select('module').select('submodule').select('description');
+
+        res.status(200);
+        res.json(result);
+    }
+});
+router.get('/:credentialId',async (req, res) => {
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_read');
+    if(credential)
+    {
+        const result = await db('credentials').select('id').select('module').select('submodule').select('description')
+            .where('credentials.id',req.params.credentialId);
+
+        res.status(200);
+        res.json(result);
+    }
+
+});
+router.post('',async (req, res) => {
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_write');
+    if(credential)
+    {
+        const result = await db.insert({
+            module:req.body.module,
+            submodule:req.body.submodule,
+            description:req.body.description
+        })
+        .into('credentials')
+
+        res.status(200);
+        res.send('Success');
+    }
+});
+router.post('/remove/:credentialId',async (req, res) => {
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_write');
+    if(credential)
+    {
+        const result = await db('credentials').where('credentials.id',req.params.credentialId).del()
+            .where('credentials.id',req.params.credentialId);
+
+        res.status(200);
+        res.json(result);
+    }
+});
+
+
+module.exports = router;
