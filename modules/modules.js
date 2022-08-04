@@ -21,7 +21,7 @@ router.get('/current',async (req, res) => {
                 .leftJoin('credentials','credentials.id','user_credentials.credentialID')
                 .leftJoin('users','users.id','user_credentials.userId')
                 .leftJoin(db.raw("modules on modules.id = credentials.submodule::integer"))
-                .where('credentials.module','module').andWhere('users.token',req.headers['authorization'].split(' ')[1]);
+                .where('credentials.module','module').andWhere('users.token',req.headers['authorization'].split(' ')[1]?req.headers['authorization'].split(' ')[1]:'');
     res.status(200);
     res.json(result);
                 
