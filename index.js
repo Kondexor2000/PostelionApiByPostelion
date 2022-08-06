@@ -9,6 +9,7 @@ const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(cors({ origin: '*'}));
 
+
 //Configure connection to DB
 const knex = require('knex')({
   client: 'pg',
@@ -28,12 +29,15 @@ module.exports.db = knex;
 const user = require('./modules/user');
 const credentials = require('./modules/credentials');
 const modules = require('./modules/modules');
+const cv = require('./modules/cv');
+const projects = require('./modules/projects');
 
 //Start Modules
 app.use('/user', user);
 app.use('/credentials',credentials);
 app.use('/modules',modules);
-
+app.use('/cv',cv);
+app.use('/projects',projects);
 
 
   

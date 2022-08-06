@@ -5,10 +5,10 @@ router = express.Router();
 
 router.get('',async (req, res) => {
 
-    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read');
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read',res);
     if(credential)
     {
-        const result = await db('users').select('id').select('name').select('last_logged');
+        const result = await db('users').select('id').select('name').select('last_logged').catch(error=>{res.status(500);res.send("Error")});
 
         res.status(200);
         res.send(result);
@@ -17,21 +17,47 @@ router.get('',async (req, res) => {
 router.get('/current',async (req, res) => {
 
     const result = await db('users').select('id').select('name').select('last_logged')
-        .where('users.token',req.headers['authorization'].split(' ')[1]);
+        .where('users.token',req.headers['authorization'].split(' ')[1]).catch(error=>{res.status(500);res.send("Error")});
 
     res.status(200);
     res.json(result);
     
 });
 router.get('/:userId',async (req, res) => {
-    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read');
+    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read',res);
     if(credential)
     {
         const result = await  db('users').select('id').select('name').select('last_logged')
-            .where('users.id',req.params.userId)
+            .where('users.id',req.params.userId).catch(error=>{res.status(500);res.send("Error")});
 
         res.status(200);
-        res.json(result)
+        res.json(result);
+    }
+});
+router.post('/current',async (req,res)=>{
+
+    if(req.body.name !=null)
+    {
+        if(req.body.name.trim().length >0)
+        {
+            const result = await db('users')
+            .where({ token: req.headers['authorization'].split(' ')[1] })
+            .update({name: req.body.name, thisKeyIsSkipped: undefined})
+            .catch(error=>{res.status(500);res.send("Error")});
+
+            res.status(200);
+            res.send("Success");
+        }
+        else 
+        {
+            res.status(500);
+            res.send("No data: name");
+        }
+    }
+    else 
+    {
+        res.status(500);
+        res.send("No data: name");
     }
 });
 
