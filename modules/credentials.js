@@ -27,19 +27,22 @@ router.get('/:credentialId',async (req, res) => {
 
 });
 router.post('',async (req, res) => {
-    const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_write',res);
-    if(credential)
-    {
-        const result = await db.insert({
-            module:req.body.module,
-            submodule:req.body.submodule,
-            description:req.body.description
-        })
-        .into('credentials').catch(error=>{res.status(500);res.send("Error")});
+    try{
+        const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_write',res);
+        if(credential)
+        {
+            const result = await db.insert({
+                module:req.body.module,
+                submodule:req.body.submodule,
+                description:req.body.description
+            })
+            .into('credentials').catch(error=>{res.status(500);res.send("Error")});
 
-        res.status(200);
-        res.send('Success');
+            res.status(200);
+            res.send('Success');
+        }
     }
+    catch{}
 });
 router.post('/remove/:credentialId',async (req, res) => {
     const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'credentials_write',res);

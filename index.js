@@ -31,6 +31,7 @@ const credentials = require('./modules/credentials');
 const modules = require('./modules/modules');
 const cv = require('./modules/cv');
 const projects = require('./modules/projects');
+const messages = require('./modules/messages');
 
 //Start Modules
 app.use('/user', user);
@@ -38,6 +39,7 @@ app.use('/credentials',credentials);
 app.use('/modules',modules);
 app.use('/cv',cv);
 app.use('/projects',projects);
+app.use('/messages',messages);
 
 
   

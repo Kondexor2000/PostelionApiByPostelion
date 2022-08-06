@@ -7,15 +7,7 @@ router.get('',async (req, res) => {
     const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'projects_read',res);
     if(credential)
     {
-        const result =[];
-        const projects =  await db('projects').select('*');
-
-
-        for(let i=0;i<projects.length;i++)
-        {
-            result.push(projects[i]);
-            result[i].additionalData =  await db('projects_additional_data').select('name').select('value').where('id_project',projects[i].id);
-        }
+        const result =  await db('projects').select('*').orderBy('order');
         res.status(200);
         res.json(result);
     }
