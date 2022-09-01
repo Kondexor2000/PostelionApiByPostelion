@@ -33,6 +33,7 @@ const cv = require('./modules/cv');
 const projects = require('./modules/projects');
 const messages = require('./modules/messages');
 const admin = require('./modules/admin');
+const meets = require('./modules/meets');
 
 //Start Modules
 app.use('/user', user);
@@ -42,6 +43,7 @@ app.use('/cv',cv);
 app.use('/projects',projects);
 app.use('/messages',messages);
 app.use('/admin',admin);
+app.use('/meets',meets);
 
 
   
