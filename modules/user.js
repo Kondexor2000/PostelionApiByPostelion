@@ -1,6 +1,7 @@
 const security = require('./security');
 const express = require('express');
 const {db} = require('../index');
+const e = require('express');
 router = express.Router();
 
 router.get('',async (req, res) => {
@@ -17,11 +18,25 @@ router.get('',async (req, res) => {
 router.get('/current',async (req, res) => {
 
     const result = await db('users').select('id').select('name').select('last_logged')
-        .where('users.token',req.headers['authorization'].split(' ')[1]).catch(error=>{res.status(500);res.send("Error")});
+        .where('users.token',await security.getCookie(req)).catch(error=>{res.status(500);res.send("Error")});
 
     res.status(200);
     res.json(result);
     
+});
+router.get('/login',async (req,res)=>{
+    const result = await db('users').select('*')
+    .where('users.token',await security.getCookie(req)).catch(error=>{res.status(500);res.send(error)});
+    if(result.length>0)
+    {
+        res.status(200);
+        res.send("token_ok");
+    }
+    else
+    {
+        res.status(401);
+        res.send("token_bad");
+    }
 });
 router.get('/:userId',async (req, res) => {
     const credential = await security.asyncCheckCredentials(req.headers['authorization'],db,'users_read',res);
@@ -34,6 +49,7 @@ router.get('/:userId',async (req, res) => {
         res.json(result);
     }
 });
+
 router.post('/current',async (req,res)=>{
 
     if(req.body.name !=null)

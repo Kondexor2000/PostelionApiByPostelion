@@ -25,8 +25,6 @@ async function asyncCheckCredentials(token,knex,credentials,res)
             return false;
         }
 }
-
-
 async function asyncCheckIsAdmin(token,knex,res)
 {
     const result = await knex('users')
@@ -53,6 +51,22 @@ async function asyncCheckIsAdmin(token,knex,res)
             return false;
         }
 }
-
+async function getCookie(req)
+{
+    try{
+    if(req!=undefined)
+    {
+        if(req.headers!=undefined)
+        {
+            if(req.headers['authorization']!=undefined)
+            {
+                if(req.headers['authorization'].split(' ')[1]!=undefined) return req.headers['authorization'].split(' ')[1];
+            }
+        }
+    }
+    return "";
+    } catch {return ""};
+}
 module.exports.asyncCheckCredentials = asyncCheckCredentials;
 module.exports.asyncCheckAdmin = asyncCheckIsAdmin;
+module.exports.getCookie = getCookie;
