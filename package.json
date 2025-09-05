@@ -1,0 +1,28 @@
+{
+  "name": "postelionapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Postelion/PostelionApi.git"
+  },
+  "author": "postelion",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Postelion/PostelionApi/issues"
+  },
+  "homepage": "https://github.com/Postelion/PostelionApi#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "knex": "^2.2.0",
+    "method-override": "^3.0.0",
+    "pg": "^8.7.3"
+  }
+}
